@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/64d58efce2.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Matrix</title>
+    <!-- Developed by theghostin @ tushar.plak.in -->
+    <!-- This is a Math project to do basic matrix calculation -->
+    <!-- It entirely made on HTML, JS nodeCSS -->
+    <!-- Project is hosted on github.com by the tusharkalita -->
+  </head>
+  <body>
+    <div class="container">
+      <div class="forms-container">
+        <div class="signin-signup">
+          <form action="#" class="sign-in-form">
+            <h2 class="title">Matrix Calculator</h2>
+
+            <div class="input-field">
+              <i class="fas fa-envelope"></i>
+              <textarea id="mtx1" class="center-block" value="0"></textarea>
+            </div>
+            <div class="input-field">
+              <i class="fas fa-lock"></i>
+              <textarea id="mtx2" class="center-block" value="0"></textarea>
+            
+            </div>
+
+               <select id="mode">
+      <option>Inverse</option>
+      <option>＋</option>
+      <option>－</option>
+      <option>×</option>
+      <option>÷</option>
+      
+    </select>
+             
+             <button onClick="calculate()" class="btn">Calculate</button>
+            
+            <p id="rst">....</p>
+            <p class="social-text">Developed by Team Zero</p>
+            <div class="social-media">
+              <a href="#" class="social-icon">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+           
+            </div>
+          </form>
+          <form action="#" class="sign-up-form">
+            <h2 class="title">Team Zero Members</h2>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input readonly type="text" placeholder="Brazakishor Tamuli" />
+              
+            </div>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input readonly type="text" placeholder="Himjyoti Das" />
+              
+            </div>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input readonly type="text" placeholder="Minaj Choudhary" />
+              
+            </div>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input readonly type="text" placeholder="Shimanta Baruah" />
+              
+            </div>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input readonly type="text" placeholder="Tushar Kalita" />
+              
+            </div>
+            
+
+            
+            
+
+                         <div>
+                <a href="./documentation.html" class="href"> <span class="rules-text">"How does it work"</a></span> To know more check out documentation
+              </div>
+
+              <button onclick="location.href = './documentation.html';"class="btn" >Documentation</button>
+            <p class="social-text">Check out the what is under the hood or the Code of this project on our github pages</p>
+            <div class="social-media">
+              <a href="#" class="social-icon">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+           
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panels-container">
+        <div class="panel left-panel">
+          <div class="content">
+            <h3>Developers and Contributers</h3>
+            <p>
+            
+            </p>
+            <button class="btn transparent" id="sign-up-btn">
+              Contibuter list
+            </button>
+          </div>
+          <img src="img/register.svg" class="image" alt="Register" />
+        </div>
+        <div class="panel right-panel">
+          <div class="content">
+            <h3>Matrix Calculator</h3>
+            <p>
+                Checkout the working project!
+            </p>
+            <button class="btn transparent" id="sign-in-btn">
+             Do Matrix
+            </button>
+          </div>
+          <img src="img/login.svg" class="image" alt="Login" />
+        </div>
+      </div>
+    </div>
+    <script src="main.js"></script>
+    <script>
+      var mtx1,mtx2;
+      var rstbox=document.getElementById('rst');
+      
+      function calculate()
+      {
+        mtx1=transform(document.getElementById('mtx1').value);
+        mtx2=transform(document.getElementById('mtx2').value);
+      
+        switch(document.getElementById('mode').selectedIndex)
+        {
+          case 0:writeMtx(simplify(mtx1));break;
+          case 1:writeMtx(add(mtx1,mtx2));break;
+          case 2:writeMtx(sub(mtx1,mtx2));break;
+          case 3:writeMtx(mul(mtx1,mtx2));break;
+          case 4:writeMtx(div(mtx1,mtx2));break;
+          case 5:writeMtx(inverse(mtx1));break;
+        }
+      }
+      
+      
+      function transform(res)
+      {	res=res.replace(/ +/g," ");
+        res=res.replace(/ \n/g,"\n");
+      
+        var rows=res.split("\n");
+        var mtx=new Array();
+        for (var i in rows){mtx[i]=rows[i].split(" ");}//mtx[y][x]
+        for (var y in mtx) for (var x in mtx[0]) mtx[y][x]=parseFloat(mtx[y][x]);
+        return mtx;
+      }
+      
+      
+      function writeMtx(mtx)
+      {	var x,y;
+        rstbox.innerHTML="";
+        for (y in mtx) {
+          for (x=1,rstbox.innerHTML+=Math.round(mtx[y][0]*1000)/1000;x<mtx[y].length;x++)
+          rstbox.innerHTML+=" "+Math.round(mtx[y][x]*1000)/1000;
+          rstbox.innerHTML+="<br/>";}
+      }
+      
+      
+      function elementaryRowOperation_exchange(mtx,row1,row2)
+      {
+        var tmp=mtx[row1];
+        mtx[row1]=mtx[row2];
+        mtx[row2]=tmp;
+      }
+      
+      function elementaryRowOperation_scalarMultiple(mtx,row,num)
+      {
+        for (var x in mtx[row]){mtx[row][x]*=num;}
+      }
+      
+      function elementaryRowOperation_Multiplier(mtx,row1,row2,num)
+      {
+        for (var x in mtx[row1]){mtx[row1][x]+=num*mtx[row2][x];}
+      }
+      
+      function simplify(mtx)
+      {
+        var i=0;
+        for (var x=0;x<mtx[0].length;x++) for (var y=i;y<mtx.length;y++) 
+        {
+        if (mtx[y][x]!=0)
+          {elementaryRowOperation_scalarMultiple(mtx,y,1/mtx[y][x]);
+          elementaryRowOperation_exchange(mtx,y,i);
+          for (y++;y<mtx.length;y++) elementaryRowOperation_Multiplier(mtx,y,i,-mtx[y][x]);
+          i++;}
+        }
+        for (i--;i>=0;i--) for (x=0;x<mtx[0].length;x++)
+        {
+        if (mtx[i][x]!=0){for (y=i-1;y>=0;y--) elementaryRowOperation_Multiplier(mtx,y,i,-mtx[y][x]/mtx[i][x]);break;}
+        }
+        return mtx;
+      }
+      
+      function add(mtx1,mtx2)
+      {
+        for (var y in mtx1) for (var x in mtx1[0]) mtx1[y][x]+=mtx2[y][x];
+        return mtx1;
+      }
+      
+      function sub(mtx1,mtx2)
+      {
+        for (var y in mtx1) for (var x in mtx1[0]) mtx1[y][x]-=mtx2[y][x];
+        return mtx1;
+      }
+      
+      
+      function mul(mtx1,mtx2)
+      {	var x,y,k;
+        var rst=new Array(mtx1.length);
+        for (y=0;y<rst.length;y++) rst[y]=new Array(mtx2[0].length);
+        for (y=0;y<rst.length;y++) for (x=0;x<rst[0].length;x++)
+          {
+          rst[y][x]=0;
+          for(k in mtx1[0]) rst[y][x]+=mtx1[y][k]*mtx2[k][x];
+          }
+        return rst;
+      }
+      
+      function inverse(mtx)
+      {	var x,y,a;
+        a=mtx.length;
+        for (y=0;y<a;y++) for (x=0;x<a;x++) mtx[y].push(0);
+        for (y=0;y<a;y++) mtx[y][a+y]=1;
+        simplify(mtx);
+        for (y=0;y<a;y++) for (x=0;x<a;x++) mtx[y].shift();	
+        return mtx;
+      }
+      
+      function div(mtx1,mtx2)
+      {
+        return mul(mtx1,inverse(mtx2));
+      }
+      window.stop();
+      </script>
+      
+  </body>
+</html>

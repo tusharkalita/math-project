@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Matrix Calc</title>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'><link rel="stylesheet" href="./style.css">
+  <meta http-equiv="refresh" content="3;url=./matrix.html" />
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!--
+User Story: I can add, subtract, multiply and divide two numbers.
+
+User Story: I can clear the input field with a clear button.
+
+User Story: I can keep chaining mathematical operations together until I hit the equal button, and the calculator will tell me the correct output.
+
+https://codepen.io/FreeCodeCamp/full/PNKdjo/
+-->
+
+<body>
+
+
+
+  <canvas id="c"></canvas>
+<div>
+  <div class="well calc-main center-block">
+    <input readonly id="inputBar" class="center-block" type="text" value="0">
+    <input readonly id="inputBar" class="center-block" type="text" value="0">
+
+    <select id="mode">
+      <option>Simple</option>
+      <option>＋</option>
+      <option>－</option>
+      <option>×</option>
+      <option>÷</option>
+      <option>inverse</option>
+    </select>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-calculate">Calculate</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+  
+
+<script>
+  var mtx1,mtx2;
+  var rstbox=document.getElementById('rst');
+  
+  function calculate()
+  {
+    mtx1=transform(document.getElementById('mtx1').value);
+    mtx2=transform(document.getElementById('mtx2').value);
+  
+    switch(document.getElementById('mode').selectedIndex)
+    {
+      case 0:writeMtx(simplify(mtx1));break;
+      case 1:writeMtx(add(mtx1,mtx2));break;
+      case 2:writeMtx(sub(mtx1,mtx2));break;
+      case 3:writeMtx(mul(mtx1,mtx2));break;
+      case 4:writeMtx(div(mtx1,mtx2));break;
+      case 5:writeMtx(inverse(mtx1));break;
+    }
+  }
+  
+  
+  function transform(res)
+  {	res=res.replace(/ +/g," ");
+    res=res.replace(/ \n/g,"\n");
+  
+    var rows=res.split("\n");
+    var mtx=new Array();
+    for (var i in rows){mtx[i]=rows[i].split(" ");}//mtx[y][x]
+    for (var y in mtx) for (var x in mtx[0]) mtx[y][x]=parseFloat(mtx[y][x]);
+    return mtx;
+  }
+  
+  
+  function writeMtx(mtx)
+  {	var x,y;
+    rstbox.innerHTML="";
+    for (y in mtx) {
+      for (x=1,rstbox.innerHTML+=Math.round(mtx[y][0]*1000)/1000;x<mtx[y].length;x++)
+      rstbox.innerHTML+=" "+Math.round(mtx[y][x]*1000)/1000;
+      rstbox.innerHTML+="<br/>";}
+  }
+  
+  
+  function elementaryRowOperation_exchange(mtx,row1,row2)
+  {
+    var tmp=mtx[row1];
+    mtx[row1]=mtx[row2];
+    mtx[row2]=tmp;
+  }
+  
+  function elementaryRowOperation_scalarMultiple(mtx,row,num)
+  {
+    for (var x in mtx[row]){mtx[row][x]*=num;}
+  }
+  
+  function elementaryRowOperation_Multiplier(mtx,row1,row2,num)
+  {
+    for (var x in mtx[row1]){mtx[row1][x]+=num*mtx[row2][x];}
+  }
+  
+  function simplify(mtx)
+  {
+    var i=0;
+    for (var x=0;x<mtx[0].length;x++) for (var y=i;y<mtx.length;y++) 
+    {
+    if (mtx[y][x]!=0)
+      {elementaryRowOperation_scalarMultiple(mtx,y,1/mtx[y][x]);
+      elementaryRowOperation_exchange(mtx,y,i);
+      for (y++;y<mtx.length;y++) elementaryRowOperation_Multiplier(mtx,y,i,-mtx[y][x]);
+      i++;}
+    }
+    for (i--;i>=0;i--) for (x=0;x<mtx[0].length;x++)
+    {
+    if (mtx[i][x]!=0){for (y=i-1;y>=0;y--) elementaryRowOperation_Multiplier(mtx,y,i,-mtx[y][x]/mtx[i][x]);break;}
+    }
+    return mtx;
+  }
+  
+  function add(mtx1,mtx2)
+  {
+    for (var y in mtx1) for (var x in mtx1[0]) mtx1[y][x]+=mtx2[y][x];
+    return mtx1;
+  }
+  
+  function sub(mtx1,mtx2)
+  {
+    for (var y in mtx1) for (var x in mtx1[0]) mtx1[y][x]-=mtx2[y][x];
+    return mtx1;
+  }
+  
+  
+  function mul(mtx1,mtx2)
+  {	var x,y,k;
+    var rst=new Array(mtx1.length);
+    for (y=0;y<rst.length;y++) rst[y]=new Array(mtx2[0].length);
+    for (y=0;y<rst.length;y++) for (x=0;x<rst[0].length;x++)
+      {
+      rst[y][x]=0;
+      for(k in mtx1[0]) rst[y][x]+=mtx1[y][k]*mtx2[k][x];
+      }
+    return rst;
+  }
+  
+  function inverse(mtx)
+  {	var x,y,a;
+    a=mtx.length;
+    for (y=0;y<a;y++) for (x=0;x<a;x++) mtx[y].push(0);
+    for (y=0;y<a;y++) mtx[y][a+y]=1;
+    simplify(mtx);
+    for (y=0;y<a;y++) for (x=0;x<a;x++) mtx[y].shift();	
+    return mtx;
+  }
+  
+  function div(mtx1,mtx2)
+  {
+    return mul(mtx1,inverse(mtx2));
+  }
+
+  </script>
+
+
+</body>
+<!-- partial -->
+  <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
