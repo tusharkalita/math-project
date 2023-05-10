@@ -148,12 +148,12 @@
       
         switch(document.getElementById('mode').selectedIndex)
         {
-          case 0:writeMtx(simplify(mtx1));break;
+          case 0:writeMtx(inverse(mtx1));break;
           case 1:writeMtx(add(mtx1,mtx2));break;
           case 2:writeMtx(sub(mtx1,mtx2));break;
           case 3:writeMtx(mul(mtx1,mtx2));break;
           case 4:writeMtx(div(mtx1,mtx2));break;
-          case 5:writeMtx(inverse(mtx1));break;
+          
         }
       }
       
